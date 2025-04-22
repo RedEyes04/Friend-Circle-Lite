@@ -2,7 +2,7 @@ name: Friend Circle Lite
 
 on:
   schedule:
-    - cron: "0 */4 * * *"  # 每 4 小时运行一次
+    - cron: "0 */4 * * *"
   workflow_dispatch:
 
 env:
@@ -46,7 +46,9 @@ jobs:
     - name: Check RSS feeds
       env:
         SMTP_PWD: ${{ secrets.SMTP_PWD }}
+        FCL_REPO: ${{ github.repository }}
       run: |
+        echo "Checking RSS feeds..."
         python run.py
 
     - name: Upload last_articles.json as artifact
@@ -82,6 +84,7 @@ jobs:
     if: ${{ always() }}
     needs: friend-circle-lite
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
     steps:
-      - name: Do nothing, just keep alive
-        run: echo "Keeping the repository active with a no-op job"
+      - uses: liskin/gh-workflow-keepalive@v1
